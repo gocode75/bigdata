@@ -1,0 +1,42 @@
+import org.apache.storm.task.OutputCollector;
+import org.apache.storm.task.TopologyContext;
+import org.apache.storm.topology.OutputFieldsDeclarer;
+import org.apache.storm.topology.base.BaseRichBolt;
+import org.apache.storm.tuple.Tuple;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+public class CountBolt extends BaseRichBolt {
+    private HashMap<String, Integer> wordMap = new HashMap<String, Integer>();
+
+    public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
+
+    }
+
+    public void execute(Tuple tuple) {
+        // read words from tuple
+        String word = tuple.getStringByField("word");
+
+        // count
+        int num;
+        if (wordMap.containsKey(word)) {
+            num = wordMap.get(word);
+        } else {
+            num = 0;
+        }
+        wordMap.put(word, 1 + num);
+
+        // display output
+        Set<String> keys = wordMap.keySet();
+        for (String key: keys) {
+            System.out.print(key + ":" + wordMap.get(key) + ",");
+        }
+        System.out.println();
+    }
+
+    public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
+
+    }
+}
